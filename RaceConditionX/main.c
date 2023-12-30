@@ -37,6 +37,7 @@ void vButtonHandler4(void *pvParameters);
 
 SemaphoreHandle_t buttonUpdate;		//ButtonUpdate Semaphore to signal new Buttonpress
 SemaphoreHandle_t buttondataKey;	//A-Resource for buttonData
+QueueHandle_t		buttonqueue;
 uint32_t buttonData = 0;			//P-Resource
 
 void vApplicationIdleHook( void )
@@ -52,6 +53,7 @@ int main(void)
 	
 	buttonUpdate = xSemaphoreCreateBinary();
 	buttondataKey = xSemaphoreCreateMutex();
+	buttonqueue = xQueueCreate(10, sizeof(uint32_t));
 
 	xTaskCreate( vDisplayTask, (const char *) "dTask", configMINIMAL_STACK_SIZE+10, NULL, 1, NULL);
 	xTaskCreate( vButtonHandler1, (const char *) "bHandler", configMINIMAL_STACK_SIZE+10, NULL, 1, NULL);
