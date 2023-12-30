@@ -51,7 +51,7 @@ int main(void)
 	vInitDisplay();
 	
 	buttonUpdate = xSemaphoreCreateBinary();
-	buttonqueue = xQueueCreate(10, sizeof(uint32_t));
+	buttonqueue = xQueueCreate(10, sizeof(uint8_t));
 
 	xTaskCreate( vDisplayTask, (const char *) "dTask", configMINIMAL_STACK_SIZE+10, NULL, 1, NULL);
 	xTaskCreate( vButtonHandler1, (const char *) "bHandler", configMINIMAL_STACK_SIZE+10, NULL, 1, NULL);
