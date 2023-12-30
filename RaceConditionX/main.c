@@ -35,8 +35,7 @@ void vButtonHandler2(void *pvParameters);
 void vButtonHandler3(void *pvParameters);
 void vButtonHandler4(void *pvParameters);
 
-SemaphoreHandle_t buttonUpdate;		//ButtonUpdate Semaphore to signal new Buttonpress
-QueueHandle_t		buttonqueue;
+QueueHandle_t	buttonqueue;
 uint32_t buttonData = 0;			//P-Resource
 
 void vApplicationIdleHook( void )
@@ -50,7 +49,6 @@ int main(void)
 	vInitClock();
 	vInitDisplay();
 	
-	buttonUpdate = xSemaphoreCreateBinary();
 	buttonqueue = xQueueCreate(10, sizeof(uint8_t));
 
 	xTaskCreate( vDisplayTask, (const char *) "dTask", configMINIMAL_STACK_SIZE+10, NULL, 1, NULL);
@@ -69,25 +67,22 @@ void vDisplayTask(void *pvParameters){
 	uint8_t local = 0;
 	for(;;) {
 		while(uxQueueMessagesWaiting(buttonqueue) > 0){
-		if(xSemaphoreTake(buttonUpdate, 100/portTICK_RATE_MS)) { //Wait for Button-Press
-			if(xQueueReceive(buttonqueue, &local, portMAX_DELAY) == pdTRUE) { //Lock A-Resource to get access to P-Resource
-				switch(local) {
-					case 1:
-						b1++;
-					break;
-					case 2:
-						b2++;
-					break;
-					case 3:
-						b3++;
-					break;
-					case 4:
-						b4++;
-					break;
+		if(xQueueReceive(buttonqueue, &local, portMAX_DELAY) == pdTRUE) { //Lock A-Resource to get access to P-Resource
+			switch(local) {
+				case 1:
+					b1++;
+				break;
+				case 2:
+					b2++;
+				break;
+				case 3:
+					b3++;
+				break;
+				case 4:
+					b4++;
+				break;
 				}
 				buttonData = 0;
-				xSemaphoreGive(buttonUpdate);
-			}
 		}
 		vDisplayWriteStringAtPos(0,0,"B1: %d", b1);
 		vDisplayWriteStringAtPos(1,0,"B2: %d", b2);
@@ -109,7 +104,6 @@ void vButtonHandler1(void *pvParameters) { //Buttonhandler to debounce Button an
 					vTaskDelay(10);
 				}
 				xQueueSend(buttonqueue, p_value, 10);
-				xSemaphoreGive(buttonUpdate);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -125,7 +119,6 @@ void vButtonHandler2(void *pvParameters) {
 					vTaskDelay(10);
 				}
 				xQueueSend(buttonqueue, p_value, 10);
-				xSemaphoreGive(buttonUpdate);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -140,7 +133,6 @@ void vButtonHandler3(void *pvParameters) {
 					vTaskDelay(10);
 				}
 				xQueueSend(buttonqueue, p_value, 10);
-				xSemaphoreGive(buttonUpdate);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -155,7 +147,6 @@ void vButtonHandler4(void *pvParameters) {
 					vTaskDelay(10);
 				}
 				xQueueSend(buttonqueue, p_value, 10);
-				xSemaphoreGive(buttonUpdate);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
