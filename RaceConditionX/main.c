@@ -68,10 +68,12 @@ int main(void)
 
 void vDisplayTask(void *pvParameters){
 	uint32_t b1 = 0, b2 = 0, b3 = 0, b4 = 0;
+	uint8_t local = 0;
 	for(;;) {
 		if(xSemaphoreTake(buttonUpdate, 100/portTICK_RATE_MS)) { //Wait for Button-Press
 			if(xSemaphoreTake(buttondataKey, portMAX_DELAY)) { //Lock A-Resource to get access to P-Resource
-				switch(buttonData) {
+				xQueueReceive(buttonqueue, &local, 10);
+				switch(local) {
 					case 1:
 						b1++;
 					break;
@@ -87,6 +89,7 @@ void vDisplayTask(void *pvParameters){
 				}
 				buttonData = 0;
 				xSemaphoreGive(buttondataKey); //Unlock A-Resource
+				xSemaphoreGive(buttonUpdate);
 			}
 		}
 		vDisplayWriteStringAtPos(0,0,"B1: %d", b1);
@@ -99,31 +102,36 @@ void vDisplayTask(void *pvParameters){
 
 void vButtonHandler1(void *pvParameters) { //Buttonhandler to debounce Button and send to DisplayTask
 	PORTF.DIRCLR = 0x10;
+	uint8_t value = 1;
+	uint8_t * p_value = &value;
+	
 	for(;;) {
 		if((PORTF.IN & 0x10) == 0x00) {
 				while((PORTF.IN & 0x10) == 0x00) { //crude debouncing
 					vTaskDelay(10);
 				}
-				
-				buttonData = 1;
+				xQueueSend(buttonqueue, p_value, 10);
+				//buttonData = 1;
 				xSemaphoreGive(buttonUpdate);
-				xSemaphoreGive(buttondataKey);
+				//xSemaphoreGive(buttondataKey);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
 }
 void vButtonHandler2(void *pvParameters) {
 	PORTF.DIRCLR = 0x20;
+	uint8_t value = 2;
+	uint8_t * p_value = &value;
+		
 	for(;;) {
 		if((PORTF.IN & 0x20) == 0x00) {
-			//if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
 				while((PORTF.IN & 0x20) == 0x00) {
 					vTaskDelay(10);
 				}
-				buttonData = 2;
+								xQueueSend(buttonqueue, p_value, 10);
+				//buttonData = 2;
 				xSemaphoreGive(buttonUpdate);
-				xSemaphoreGive(buttondataKey);
-			//}
+				//xSemaphoreGive(buttondataKey);
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
