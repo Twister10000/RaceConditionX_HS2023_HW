@@ -36,7 +36,6 @@ void vButtonHandler3(void *pvParameters);
 void vButtonHandler4(void *pvParameters);
 
 QueueHandle_t	buttonqueue;
-uint32_t buttonData = 0;			//P-Resource
 
 void vApplicationIdleHook( void )
 {	
@@ -82,7 +81,6 @@ void vDisplayTask(void *pvParameters){
 					b4++;
 				break;
 				}
-				buttonData = 0;
 		}
 		vDisplayWriteStringAtPos(0,0,"B1: %d", b1);
 		vDisplayWriteStringAtPos(1,0,"B2: %d", b2);
