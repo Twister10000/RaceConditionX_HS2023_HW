@@ -99,14 +99,13 @@ void vButtonHandler1(void *pvParameters) { //Buttonhandler to debounce Button an
 	PORTF.DIRCLR = 0x10;
 	for(;;) {
 		if((PORTF.IN & 0x10) == 0x00) {
-			if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
 				while((PORTF.IN & 0x10) == 0x00) { //crude debouncing
 					vTaskDelay(10);
 				}
+				
 				buttonData = 1;
 				xSemaphoreGive(buttonUpdate);
 				xSemaphoreGive(buttondataKey);
-			}
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -115,14 +114,14 @@ void vButtonHandler2(void *pvParameters) {
 	PORTF.DIRCLR = 0x20;
 	for(;;) {
 		if((PORTF.IN & 0x20) == 0x00) {
-			if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
+			//if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
 				while((PORTF.IN & 0x20) == 0x00) {
 					vTaskDelay(10);
 				}
 				buttonData = 2;
 				xSemaphoreGive(buttonUpdate);
 				xSemaphoreGive(buttondataKey);
-			}
+			//}
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -131,14 +130,14 @@ void vButtonHandler3(void *pvParameters) {
 	PORTF.DIRCLR = 0x40;
 	for(;;) {
 		if((PORTF.IN & 0x40) == 0x00) {
-			if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
+			//if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
 				while((PORTF.IN & 0x40) == 0x00) {
 					vTaskDelay(10);
 				}
 				buttonData = 3;
 				xSemaphoreGive(buttonUpdate);
 				xSemaphoreGive(buttondataKey);
-			}
+			//}
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
@@ -147,14 +146,14 @@ void vButtonHandler4(void *pvParameters) {
 	PORTF.DIRCLR = 0x80;
 	for(;;) {
 		if((PORTF.IN & 0x80) == 0x00) {
-			if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
+			//if(xSemaphoreTake(buttondataKey, 10 / portTICK_RATE_MS)) {
 				while((PORTF.IN & 0x80) == 0x00) {
 					vTaskDelay(10);
 				}
 				buttonData = 4;
 				xSemaphoreGive(buttonUpdate);
 				xSemaphoreGive(buttondataKey);
-			}
+			//}
 		}
 		vTaskDelay(50 / portTICK_RATE_MS);
 	}
