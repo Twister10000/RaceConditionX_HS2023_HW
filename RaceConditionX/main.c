@@ -64,7 +64,7 @@ int main(void)
 	return 0;
 }
 
-void vDisplayTask(void *pvParameters) {
+void vDisplayTask(void *pvParameters){
 	uint32_t b1 = 0, b2 = 0, b3 = 0, b4 = 0;
 	for(;;) {
 		if(xSemaphoreTake(buttonUpdate, 100/portTICK_RATE_MS)) { //Wait for Button-Press
@@ -93,7 +93,7 @@ void vDisplayTask(void *pvParameters) {
 		vDisplayWriteStringAtPos(3,0,"B4: %d", b4);
 		vTaskDelay(100 / portTICK_RATE_MS);
 	}
-}
+} //Alle 100ms Aufgerufen
 
 void vButtonHandler1(void *pvParameters) { //Buttonhandler to debounce Button and send to DisplayTask
 	PORTF.DIRCLR = 0x10;
